@@ -26,8 +26,9 @@ class question{
 
 var makeQuestionHTML = function(question){
     console.log(question);
-    //remove old section first
+    //remove old section first to clear the page.
     sectionEl.remove();
+    //create new section element
     sectionEl = document.createElement("section");
     sectionEl.className = "quiz";
 
@@ -102,12 +103,6 @@ var makeHighScoreScreen = function(){
     //make clear high scores - clears localStorage and updates the screen.
 }
 
-var nextQuestion = function(){
-    var text = "What is your favorite color?";
-    var answers = [(new answerChoice("green","correct")),(new answerChoice("blue","incorrect")),(new answerChoice("red","incorrect"))];
-    var q = new question(text,answers,1);
-    makeQuestionHTML(q);
-}
 
 var handleStartButtonClick = function(start){
     var text = "What is your favorite color?";
