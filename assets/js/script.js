@@ -167,8 +167,16 @@ var makeSubmitHighScoreScreen = function(){
 
 var makeHighScoreScreen = function(){
     console.log("here are all the high scores!");
+
+    //reorder highScores so that the high scores display in ascending order
+
     //Make header: High scores
-    //make ordered List: list all of the scores.
+    var header = document.createElement("h2");
+    header.textContent = "High Scores"
+
+    for(var i = 0 ; i<highScores.length;i++){
+        //make an ordered list of the scores
+    }
     //make go back button - goes to intro screen
     //make clear high scores - clears localStorage and updates the screen.
 }
@@ -215,9 +223,6 @@ var handleAnswerClick = function(answer){
     return;
 };
 
-var containsInitials = function(){
-    
-}
 var handleSubmitHighScoreClick = function(event){
     //store the high score in local storage
     event.preventDefault();
@@ -227,13 +232,23 @@ var handleSubmitHighScoreClick = function(event){
     var score = document.querySelector("#score").value;
     var hs = new highScore(initials, score);
     //get the high scores out of localstorage and put them into the highscores array.
-    if(){
+    //var c = containsInitials(initials);
+    highScores = JSON.parse(localStorage);
+    if(localStorage.getItem(initials)){
         //update existing entry
+        for(var i =0; i< highScores.length; i++){
+            if(highScores[i].initials === initials){
+                highScores[i].score = score;
+            }
+        }
     }
     else{
         //create new entry and push it into the array.
+        highScores.push(hs);
     }
-
+    localStorage = JSON.stringify(highScores);
+    //go to high scores page
+    makeHighScoreScreen();
 };
 
 bodyEl.addEventListener("click", function(event){
