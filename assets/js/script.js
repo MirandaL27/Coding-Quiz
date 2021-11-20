@@ -4,12 +4,26 @@ var time = 120;
 var sectionEl = document.querySelector(".quiz");
 var timeEl = document.querySelector(".timer span");
 var bodyEl = document.querySelector("body");
+var questions = [];
+var setInt;
+var formEl;
+var highScores = [];
+
 class answerChoice{
     answer;
     isCorrect;
     constructor(a, correct){
         this.answer = a;
         this.isCorrect = correct;
+    }
+}
+
+class highScore{
+    initials;
+    score;
+    constructor(init, number){
+        this.initials = init;
+        this.score = number;
     }
 }
 
@@ -23,7 +37,20 @@ class question{
         this.questionNum = number;
     }
 }
+var populateQuestionArray = function(){
+    //add questions to this function!
+    var text = "What is your favorite color?";
+    var answers = [(new answerChoice("green","correct")),(new answerChoice("blue","incorrect")),(new answerChoice("red","incorrect"))];
+    var q = new question(text,answers,questionNumber);
+    questions.push(q);
 
+    text = "What is your favorite Food?";
+    answers = [(new answerChoice("Chocolate","correct")),(new answerChoice("Ice Cream","incorrect")),(new answerChoice("Strawberries","incorrect"))];
+    q = new question(text,answers,questionNumber);
+    questions.push(q);
+
+    return;
+}
 var makeQuestionHTML = function(question){
     console.log(question);
     //remove old section first to clear the page.
@@ -63,6 +90,7 @@ var makeQuestionHTML = function(question){
     sectionEl.appendChild(aDiv);
     bodyEl.appendChild(sectionEl);
 questionNumber++;
+return;
 }
 
 var makeintroScreen = function(){
@@ -85,14 +113,56 @@ var makeintroScreen = function(){
     sectionEl.appendChild(header);
     sectionEl.appendChild(p);
     sectionEl.appendChild(start);
+    return;
 }
 
 var makeSubmitHighScoreScreen = function(){
     console.log("all done! submit high score?")
+
+    //remove old section first to clear the page.
+    sectionEl.remove();
+    //create new section element
+    sectionEl = document.createElement("section");
+    sectionEl.className = "quiz";
+
     //Make header: all done!
+    var header = document.createElement("h2");
+    header.textContent = "All Done!";
+
     //Make Paragraph: your final score is x points
+    var p = document.createElement("p");
+    p.id = "score";
+    p.textContent = "Your final score is " + time + " points.";
+    
     //Make form with text box and submit button: enter initials
-    //store the score in localStorage
+    formEl = document.createElement("form");
+    formEl.id = "high-score-form";
+    formEl.addEventListener("submit", function() { handleSubmitHighScoreClick(event)});
+
+    var input = document.createElement("input");
+    input.type="text";
+    input.id = "initials";
+    input.className = "initials";
+    input.name = "initials";
+
+    var label = document.createElement("label");
+    label.for = "initials";
+    label.textContent = "Enter Initials:";
+
+    var submit = document.createElement("button");
+    submit.type = "submit";
+    submit.id = "high-score";
+    submit.textContent = "Submit High Score";
+
+    formEl.appendChild(label);
+    formEl.appendChild(input);
+    formEl.appendChild(submit);
+
+    sectionEl.appendChild(header);
+    sectionEl.appendChild(p);
+    sectionEl.appendChild(formEl);
+    bodyEl.appendChild(sectionEl);
+    return;
 }
 
 var makeHighScoreScreen = function(){
@@ -105,13 +175,11 @@ var makeHighScoreScreen = function(){
 
 
 var handleStartButtonClick = function(start){
-    var text = "What is your favorite color?";
-    var answers = [(new answerChoice("green","correct")),(new answerChoice("blue","incorrect")),(new answerChoice("red","incorrect"))];
-    var q = new question(text,answers,questionNumber);
-    makeQuestionHTML(q);
+    
+    makeQuestionHTML(questions[questionNumber-1]);
 
     //start timer
-    var setInt = setInterval(() => {
+    setInt = setInterval(() => {
         if(time > 0){
             //decrement timer, update timer display
             time--;
@@ -123,6 +191,7 @@ var handleStartButtonClick = function(start){
             makeSubmitHighScoreScreen();
         }
     }, 1000);
+
 }
 
 var handleAnswerClick = function(answer){
@@ -135,10 +204,36 @@ var handleAnswerClick = function(answer){
         p.textContent = "Wrong!";
         time -= 10;
     }
-    var text = "What is your favorite Food?";
-    var answers = [(new answerChoice("Chocolate","correct")),(new answerChoice("Ice Cream","incorrect")),(new answerChoice("Strawberries","incorrect"))];
-    var q = new question(text,answers,questionNumber);
-    makeQuestionHTML(q);
+    if(questions[questionNumber-1] == undefined){
+        //stop timer, go to the all done screen instead
+        clearInterval(setInt);
+        makeSubmitHighScoreScreen();
+    }
+    else{
+        makeQuestionHTML(questions[questionNumber-1]);
+    }
+    return;
+};
+
+var containsInitials = function(){
+    
+}
+var handleSubmitHighScoreClick = function(event){
+    //store the high score in local storage
+    event.preventDefault();
+    console.dir(event);
+    event.target
+    var initials = document.querySelector("input[name='initials']").value;
+    var score = document.querySelector("#score").value;
+    var hs = new highScore(initials, score);
+    //get the high scores out of localstorage and put them into the highscores array.
+    if(){
+        //update existing entry
+    }
+    else{
+        //create new entry and push it into the array.
+    }
+
 };
 
 bodyEl.addEventListener("click", function(event){
@@ -163,5 +258,5 @@ bodyEl.addEventListener("click", function(event){
 
 //clear high scores: clears localStorage and updates the high scores screen
 //make array of question objects to be the questions.  
-
+populateQuestionArray();
 makeintroScreen();
