@@ -1,6 +1,6 @@
 var questionNumber = 1;
 var score = 0;
-var time = 120;
+var time = 0;
 var sectionEl = document.querySelector(".quiz");
 var timeEl = document.querySelector(".timer span");
 var bodyEl = document.querySelector("body");
@@ -52,7 +52,6 @@ var populateQuestionArray = function(){
     return;
 }
 var makeQuestionHTML = function(question){
-    console.log(question);
     //remove old section first to clear the page.
     sectionEl.remove();
     //create new section element
@@ -94,6 +93,14 @@ return;
 }
 
 var makeintroScreen = function(){
+    //remove old section first to clear the page.
+    sectionEl.remove();
+    //create new section element
+    sectionEl = document.createElement("section");
+    sectionEl.className = "quiz";
+
+    time = 120;
+    questionNumber = 1;
     //make timer show time variable
     timeEl.textContent = time;
     //make header: Coding Quiz Challenge
@@ -113,11 +120,11 @@ var makeintroScreen = function(){
     sectionEl.appendChild(header);
     sectionEl.appendChild(p);
     sectionEl.appendChild(start);
+    bodyEl.appendChild(sectionEl);
     return;
 }
 
 var makeSubmitHighScoreScreen = function(){
-    console.log("all done! submit high score?")
 
     //remove old section first to clear the page.
     sectionEl.remove();
@@ -166,19 +173,49 @@ var makeSubmitHighScoreScreen = function(){
 }
 
 var makeHighScoreScreen = function(){
-    console.log("here are all the high scores!");
 
-    //reorder highScores so that the high scores display in ascending order
+    //To Do: reorder highScores so that the high scores display in ascending order
+
+    highScores = highScores.sort((a, b) => {
+        if(a.score > b.score){
+            return -1;
+        }
+        if(a.score < b.score){
+            return 1;
+        }
+        return 0;
+    } );
+
+    //remove old section first to clear the page.
+    sectionEl.remove();
+    //create new section element
+    sectionEl = document.createElement("section");
+    sectionEl.className = "quiz";
 
     //Make header: High scores
     var header = document.createElement("h2");
     header.textContent = "High Scores"
 
+    var ol = document.createElement("ol");
+    ol.id = "high-score-list";
     for(var i = 0 ; i<highScores.length;i++){
         //make an ordered list of the scores
+        var li = document.createElement("li");
+        li.textContent = highScores[i].initials + " " + highScores[i].score; 
+        ol.appendChild(li);
     }
-    //make go back button - goes to intro screen
-    //make clear high scores - clears localStorage and updates the screen.
+    var back = document.createElement("button");
+    back.id = "back-button";
+    back.textContent = "Go Back";
+    var clear = document.createElement("button");
+    clear.id = "clear-button";
+    clear.textContent = "Clear High Scores"
+
+    sectionEl.appendChild(header);
+    sectionEl.appendChild(ol);
+    sectionEl.appendChild(back);
+    sectionEl.appendChild(clear);
+    bodyEl.appendChild(sectionEl);
 }
 
 
@@ -211,6 +248,7 @@ var handleAnswerClick = function(answer){
     else{
         p.textContent = "Wrong!";
         time -= 10;
+        timeEl.textContent = time;
     }
     if(questions[questionNumber-1] == undefined){
         //stop timer, go to the all done screen instead
@@ -223,18 +261,31 @@ var handleAnswerClick = function(answer){
     return;
 };
 
+var containsInitials = function(init){
+    for(var i = 0; i<highScores.length; i++){
+        if(highScores[i].initials === init){
+            return i;
+        }
+    }
+    return -1;
+}
+
 var handleSubmitHighScoreClick = function(event){
     //store the high score in local storage
     event.preventDefault();
     console.dir(event);
     event.target
     var initials = document.querySelector("input[name='initials']").value;
-    var score = document.querySelector("#score").value;
+    var score = time;
     var hs = new highScore(initials, score);
     //get the high scores out of localstorage and put them into the highscores array.
     //var c = containsInitials(initials);
-    highScores = JSON.parse(localStorage);
-    if(localStorage.getItem(initials)){
+    if(localStorage.getItem("HighScores")){
+        highScores = JSON.parse(localStorage.getItem("HighScores"));
+    }
+    var c = containsInitials(initials);
+    
+    if(c >=0){
         //update existing entry
         for(var i =0; i< highScores.length; i++){
             if(highScores[i].initials === initials){
@@ -246,13 +297,18 @@ var handleSubmitHighScoreClick = function(event){
         //create new entry and push it into the array.
         highScores.push(hs);
     }
-    localStorage = JSON.stringify(highScores);
+    localStorage.setItem("HighScores",JSON.stringify(highScores));
     //go to high scores page
     makeHighScoreScreen();
 };
 
+var clearHighScores = function(){
+    highScores.length = 0;
+    localStorage.removeItem("HighScores");
+    makeHighScoreScreen();
+}
+
 bodyEl.addEventListener("click", function(event){
-    console.log("click event");
     if(event.target.matches(".start-button")){
         //start timer, go to first question, increment question counter.
         handleStartButtonClick(event.target);
@@ -261,17 +317,17 @@ bodyEl.addEventListener("click", function(event){
         //user answered a question 
         handleAnswerClick(event.target);
     }
+    else if(event.target.matches("#back-button")){
+        //user clicked back button, go to the intro screen.
+        makeintroScreen();
+    }
+    else if(event.target.matches("#clear-button")){ 
+        //user clicked clear button, clear high scores
+        clearHighScores();
+    }
 
 });
 
-
-//on submission of high score form:
-//store the score in localStorage
-//Go to high score screen
-
-//go back button: goes to intro screen when clicked
-
-//clear high scores: clears localStorage and updates the high scores screen
 //make array of question objects to be the questions.  
 populateQuestionArray();
 makeintroScreen();
