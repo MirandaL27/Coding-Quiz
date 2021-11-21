@@ -249,14 +249,23 @@ var handleAnswerClick = function(answer){
         p.textContent = "Wrong!";
         time -= 10;
         timeEl.textContent = time;
+        
     }
+    sectionEl.appendChild(p);
     if(questions[questionNumber-1] == undefined){
         //stop timer, go to the all done screen instead
         clearInterval(setInt);
-        makeSubmitHighScoreScreen();
+        setTimeout(() => { makeSubmitHighScoreScreen();
+            
+        }, 1000);
+        
     }
     else{
-        makeQuestionHTML(questions[questionNumber-1]);
+
+        setTimeout(() => { makeQuestionHTML(questions[questionNumber-1]);
+            
+        }, 1000);
+        
     }
     return;
 };
