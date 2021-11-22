@@ -39,13 +39,28 @@ class question{
 }
 var populateQuestionArray = function(){
     //add questions to this function!
-    var text = "What is your favorite color?";
-    var answers = [(new answerChoice("green","correct")),(new answerChoice("blue","incorrect")),(new answerChoice("red","incorrect"))];
+    var text = "Which of the following is NOT a primitive type in JavaScript?";
+    var answers = [(new answerChoice("Object","correct")),(new answerChoice("String","incorrect")),(new answerChoice("Boolean","incorrect")),(new answerChoice("Number","incorrect"))];
     var q = new question(text,answers,questionNumber);
     questions.push(q);
 
-    text = "What is your favorite Food?";
-    answers = [(new answerChoice("Chocolate","correct")),(new answerChoice("Ice Cream","incorrect")),(new answerChoice("Strawberries","incorrect"))];
+    text = "What does the && sign mean?";
+    answers = [(new answerChoice("Or","incorrect")),(new answerChoice("Not","incorrect")),(new answerChoice("And","correct"))];
+    q = new question(text,answers,questionNumber);
+    questions.push(q);
+
+    text = "Which method adds an element to the end of an array?";
+    answers = [(new answerChoice("append()","incorrect")),(new answerChoice("add()","incorrect")),(new answerChoice("push()","correct")),(new answerChoice("pop()","incorrect"))];
+    q = new question(text,answers,questionNumber);
+    questions.push(q);
+
+    text = "What's the difference between function expressions and function declarations?";
+    answers = [(new answerChoice("Expressions are hoisted while declarations are not.","incorrect")),(new answerChoice("Declarations are hoisted while expressions are not.","correct")),(new answerChoice("There is no difference.","incorrect"))];
+    q = new question(text,answers,questionNumber);
+    questions.push(q);
+
+    text = "What is i++ shorthand for?";
+    answers = [(new answerChoice("Increment i by one.","correct")),(new answerChoice("Decrement i by 1.","incorrect")),(new answerChoice("Increment i by 2","incorrect")), (new answerChoice("Set i equal to 1.","incorrect"))];
     q = new question(text,answers,questionNumber);
     questions.push(q);
 
@@ -67,6 +82,7 @@ var makeQuestionHTML = function(question){
     sectionEl.appendChild(p);
 
     var aDiv = document.createElement("div");
+    aDiv.id = "answer-container";
     for(var i=0; i<question.answers.length;i++){
         var inputEl = document.createElement("input");
         inputEl.name = "answer";
@@ -79,9 +95,9 @@ var makeQuestionHTML = function(question){
         labelEl.for = "answer" + i;
         labelEl.textContent = question.answers[i].answer;
         labelEl.setAttribute("data-correctness",question.answers[i].isCorrect);
-        labelEl.style.backgroundColor = "purple";
-        labelEl.style.color = "white";
-        labelEl.style.margin= "10px";
+        // labelEl.style.backgroundColor = "purple";
+        // labelEl.style.color = "white";
+        // labelEl.style.margin= "10px";
 
         aDiv.appendChild(inputEl);    
         aDiv.appendChild(labelEl);
@@ -93,6 +109,8 @@ return;
 }
 
 var makeintroScreen = function(){
+
+    document.querySelector("header").style.display = "flex";
     //remove old section first to clear the page.
     sectionEl.remove();
     //create new section element
@@ -174,7 +192,15 @@ var makeSubmitHighScoreScreen = function(){
 
 var makeHighScoreScreen = function(){
 
-    //To Do: reorder highScores so that the high scores display in ascending order
+    //get rid of header
+    document.querySelector("header").style.display = "none";
+
+    if (highScores.length == 0){
+        //check localstorage
+        if(localStorage.getItem("HighScores")){
+            highScores = JSON.parse(localStorage.getItem("HighScores"));
+        }
+    }
 
     highScores = highScores.sort((a, b) => {
         if(a.score > b.score){
@@ -201,6 +227,7 @@ var makeHighScoreScreen = function(){
     for(var i = 0 ; i<highScores.length;i++){
         //make an ordered list of the scores
         var li = document.createElement("li");
+        li.className = "score-item";
         li.textContent = highScores[i].initials + " " + highScores[i].score; 
         ol.appendChild(li);
     }
@@ -242,11 +269,22 @@ var handleStartButtonClick = function(start){
 var handleAnswerClick = function(answer){
     //indicate whether the answer was right or wrong
     var p = document.createElement("p"); 
+    p.className="correct";
     if(answer.getAttribute("data-correctness") === "correct"){
         p.textContent = "Correct!";
+        p.style.color = "black";
+        p.style.backgroundColor = "palegreen";
+        p.style.padding = "15px";
+        p.style.borderRadius="10px";
+        p.style.margin= "10px";
     }
     else{
         p.textContent = "Wrong!";
+        p.style.backgroundColor = "pink";
+        p.style.padding = "15px";
+        p.style.color = "black";
+        p.style.borderRadius="10px";
+        p.style.margin= "10px";
         time -= 10;
         timeEl.textContent = time;
         
@@ -333,6 +371,10 @@ bodyEl.addEventListener("click", function(event){
     else if(event.target.matches("#clear-button")){ 
         //user clicked clear button, clear high scores
         clearHighScores();
+    }
+    else if(event.target.matches("#view-high-scores")){
+        //go to high scores
+        makeHighScoreScreen();
     }
 
 });
