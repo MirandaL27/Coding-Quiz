@@ -60,7 +60,7 @@ var populateQuestionArray = function(){
     questions.push(q);
 
     text = "What is i++ shorthand for?";
-    answers = [(new answerChoice("Increment i by one.","correct")),(new answerChoice("Decrement i by 1.","incorrect")),(new answerChoice("Increment i by 2","incorrect")), (new answerChoice("Set i equal to 1.","incorrect"))];
+    answers = [(new answerChoice("Increment i by 1.","correct")),(new answerChoice("Decrement i by 1.","incorrect")),(new answerChoice("Increment i by 2","incorrect")), (new answerChoice("Set i equal to 1.","incorrect"))];
     q = new question(text,answers,questionNumber);
     questions.push(q);
 
