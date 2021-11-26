@@ -9,6 +9,7 @@ var setInt;
 var formEl;
 var highScores = [];
 
+//answer choice object - has answer text and isCorrect boolean
 class answerChoice{
     answer;
     isCorrect;
@@ -18,6 +19,7 @@ class answerChoice{
     }
 }
 
+//high score object - has initials string and score number
 class highScore{
     initials;
     score;
@@ -27,46 +29,46 @@ class highScore{
     }
 }
 
+//question object - has question text, and an array of answer objects
 class question{
     questionText;
-    questionNum;
     answers = [];
-    constructor(question, answers, number){
+    constructor(question, answers){
         this.questionText = question;
         this.answers = answers;
-        this.questionNum = number;
     }
 }
 var populateQuestionArray = function(){
     //add questions to this function!
     var text = "Which of the following is NOT a primitive type in JavaScript?";
     var answers = [(new answerChoice("Object","correct")),(new answerChoice("String","incorrect")),(new answerChoice("Boolean","incorrect")),(new answerChoice("Number","incorrect"))];
-    var q = new question(text,answers,questionNumber);
+    var q = new question(text,answers);
     questions.push(q);
 
     text = "What does the && sign mean?";
     answers = [(new answerChoice("Or","incorrect")),(new answerChoice("Not","incorrect")),(new answerChoice("And","correct"))];
-    q = new question(text,answers,questionNumber);
+    q = new question(text,answers);
     questions.push(q);
 
     text = "Which method adds an element to the end of an array?";
     answers = [(new answerChoice("append()","incorrect")),(new answerChoice("add()","incorrect")),(new answerChoice("push()","correct")),(new answerChoice("pop()","incorrect"))];
-    q = new question(text,answers,questionNumber);
+    q = new question(text,answers);
     questions.push(q);
 
     text = "What's the difference between function expressions and function declarations?";
     answers = [(new answerChoice("Expressions are hoisted while declarations are not.","incorrect")),(new answerChoice("Declarations are hoisted while expressions are not.","correct")),(new answerChoice("There is no difference.","incorrect"))];
-    q = new question(text,answers,questionNumber);
+    q = new question(text,answers);
     questions.push(q);
 
     text = "What is i++ shorthand for?";
     answers = [(new answerChoice("Increment i by 1.","correct")),(new answerChoice("Decrement i by 1.","incorrect")),(new answerChoice("Increment i by 2","incorrect")), (new answerChoice("Set i equal to 1.","incorrect"))];
-    q = new question(text,answers,questionNumber);
+    q = new question(text,answers);
     questions.push(q);
 
     return;
 }
 var makeQuestionHTML = function(question){
+    //this function takes a question object as a parameter and adds a section element with the question and answers in it to the html.
     //remove old section first to clear the page.
     sectionEl.remove();
     //create new section element
@@ -95,9 +97,6 @@ var makeQuestionHTML = function(question){
         labelEl.for = "answer" + i;
         labelEl.textContent = question.answers[i].answer;
         labelEl.setAttribute("data-correctness",question.answers[i].isCorrect);
-        // labelEl.style.backgroundColor = "purple";
-        // labelEl.style.color = "white";
-        // labelEl.style.margin= "10px";
 
         aDiv.appendChild(inputEl);    
         aDiv.appendChild(labelEl);
@@ -109,7 +108,7 @@ return;
 }
 
 var makeintroScreen = function(){
-
+//This function makes the start screen
     document.querySelector("header").style.display = "flex";
     //remove old section first to clear the page.
     sectionEl.remove();
@@ -143,7 +142,7 @@ var makeintroScreen = function(){
 }
 
 var makeSubmitHighScoreScreen = function(){
-
+    //this function makes the screen right before the high score screen
     //remove old section first to clear the page.
     sectionEl.remove();
     //create new section element
@@ -191,7 +190,7 @@ var makeSubmitHighScoreScreen = function(){
 }
 
 var makeHighScoreScreen = function(){
-
+    //this function makes the high score screen
     //get rid of header
     document.querySelector("header").style.display = "none";
 
@@ -201,7 +200,7 @@ var makeHighScoreScreen = function(){
             highScores = JSON.parse(localStorage.getItem("HighScores"));
         }
     }
-
+    //sort the high scores in the array so that they appear in ascending order
     highScores = highScores.sort((a, b) => {
         if(a.score > b.score){
             return -1;
@@ -290,6 +289,7 @@ var handleAnswerClick = function(answer){
         
     }
     sectionEl.appendChild(p);
+    //the setTimeout() functions delay the appearance of the next question so that the user can see whether their answer was correct.
     if(questions[questionNumber-1] == undefined){
         //stop timer, go to the all done screen instead
         clearInterval(setInt);
@@ -299,7 +299,7 @@ var handleAnswerClick = function(answer){
         
     }
     else{
-
+        //go to the next question
         setTimeout(() => { makeQuestionHTML(questions[questionNumber-1]);
             
         }, 1000);
@@ -320,13 +320,11 @@ var containsInitials = function(init){
 var handleSubmitHighScoreClick = function(event){
     //store the high score in local storage
     event.preventDefault();
-    console.dir(event);
     event.target
     var initials = document.querySelector("input[name='initials']").value;
     var score = time;
     var hs = new highScore(initials, score);
     //get the high scores out of localstorage and put them into the highscores array.
-    //var c = containsInitials(initials);
     if(localStorage.getItem("HighScores")){
         highScores = JSON.parse(localStorage.getItem("HighScores"));
     }

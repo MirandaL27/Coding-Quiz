@@ -3,6 +3,7 @@ body{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
+/*Header section styles start*/
 header{
     display:flex;
     justify-content: space-between;
@@ -11,7 +12,9 @@ header{
     background-color: mediumpurple;
     color:white;
 }
+/*Header section styles end*/
 
+/*Quiz Section section styles start*/
 #view-high-scores{
     padding: 10px;
     transition: all 0.5s ease-in-out
@@ -81,6 +84,7 @@ label:hover{
     border-radius: 10px;
     margin: 10px;
 }
+/*Quiz Section section styles end*/
 
 
 
