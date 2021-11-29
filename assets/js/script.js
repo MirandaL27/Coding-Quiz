@@ -9,7 +9,7 @@ var setInt;
 var formEl;
 var highScores = [];
 
-//answer choice object - has answer text and isCorrect boolean
+//answer choice object - has answer text and isCorrect string
 class answerChoice{
     answer;
     isCorrect;
@@ -308,15 +308,6 @@ var handleAnswerClick = function(answer){
     return;
 };
 
-var containsInitials = function(init){
-    for(var i = 0; i<highScores.length; i++){
-        if(highScores[i].initials === init){
-            return i;
-        }
-    }
-    return -1;
-}
-
 var handleSubmitHighScoreClick = function(event){
     //store the high score in local storage
     event.preventDefault();
@@ -328,20 +319,9 @@ var handleSubmitHighScoreClick = function(event){
     if(localStorage.getItem("HighScores")){
         highScores = JSON.parse(localStorage.getItem("HighScores"));
     }
-    var c = containsInitials(initials);
-    
-    if(c >=0){
-        //update existing entry
-        for(var i =0; i< highScores.length; i++){
-            if(highScores[i].initials === initials){
-                highScores[i].score = score;
-            }
-        }
-    }
-    else{
-        //create new entry and push it into the array.
-        highScores.push(hs);
-    }
+    //create new entry and push it into the array.
+    highScores.push(hs);
+
     localStorage.setItem("HighScores",JSON.stringify(highScores));
     //go to high scores page
     makeHighScoreScreen();
